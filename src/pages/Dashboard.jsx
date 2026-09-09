@@ -109,6 +109,7 @@ export default function Dashboard() {
         name: form.name.trim(),
         price: Number(form.price),
         description: form.description.trim(),
+        imageUrl: imagePreview.trim(),
         createdAt: serverTimestamp(),
       });
 
@@ -118,6 +119,7 @@ export default function Dashboard() {
         description: "",
       });
 
+      setImagePreview("");
       setMessage("Product added to your shop.");
     } catch (addProductError) {
       console.error(addProductError);
