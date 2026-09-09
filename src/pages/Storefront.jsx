@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   collection,
+  doc,
+  getDoc,
   getDocs,
   query,
   where,
@@ -23,27 +25,47 @@ export default function Storefront() {
         setLoading(true);
         setError("");
 
-        const shopsQuery = query(
-          collection(db, "shops"),
-          where("slug", "==", slug)
-        );
+        let shopData = null;
 
-        const shopSnapshot = await getDocs(shopsQuery);
+        const shopByIdSnapshot = await getDoc(doc(db, "shops", slug));
 
-        if (shopSnapshot.empty) {
-          setError("This shop could not be found.");
+        if (shopByIdSnapshot.exists()) {
+          shopData = {
+            id: shopByIdSnapshot.id,
+            ...shopByIdSnapshot.data(),
+          };
+        } else {
+          const shopBySlugQuery = query(
+            collection(db, "shops"),
+            where("slug", "==", slug)
+          );
+
+          const shopBySlugSnapshot = await getDocs(shopBySlugQuery);
+
+          if (!shopBySlugSnapshot.empty) {
+            const shopDocument = shopBySlugSnapshot.docs[0];
+
+            shopData = {
+              id: shopDocument.id,
+              ...shopDocument.data(),
+            };
+          }
+        }
+
+        if (!shopData) {
+          setError(
+            `No shop matches this link: ${slug}. Check the slug in Firestore.`
+          );
           setShop(null);
           setProducts([]);
           return;
         }
 
-        const shopDoc = shopSnapshot.docs[0];
-        const shopData = { id: shopDoc.id, ...shopDoc.data() };
         setShop(shopData);
 
         const productsQuery = query(
           collection(db, "products"),
-          where("shopId", "==", shopDoc.id)
+          where("shopId", "==", shopData.id)
         );
 
         const productsSnapshot = await getDocs(productsQuery);
@@ -54,7 +76,8 @@ export default function Storefront() {
         }));
 
         setProducts(productList);
-      } catch {
+      } catch (loadError) {
+        console.error(loadError);
         setError("Something went wrong while loading this shop.");
       } finally {
         setLoading(false);
@@ -89,9 +112,11 @@ export default function Storefront() {
       <section className="storefront-header">
         <p className="eyebrow storefront-eyebrow">DukaLink storefront</p>
         <h1>{shop.businessName}</h1>
+
         {shop.description && (
           <p className="storefront-description">{shop.description}</p>
         )}
+
         {shop.location && (
           <p className="storefront-meta">Location: {shop.location}</p>
         )}
@@ -109,11 +134,19 @@ export default function Storefront() {
                 <h3>{product.name}</h3>
                 <p>{product.description || "No description added."}</p>
               </div>
+
               <div className="storefront-card-footer">
-                <strong>KES {Number(product.price || 0).toLocaleString()}</strong>
+                <strong>
+                  KES {Number(product.price || 0).toLocaleString()}
+                </strong>
+
                 <a
                   className="whatsapp-button"
-                  href={buildWhatsAppLink(shop.phone, product.name, product.price)}
+                  href={buildWhatsAppLink(
+                    shop.phone,
+                    product.name,
+                    product.price
+                  )}
                   target="_blank"
                   rel="noreferrer"
                 >

@@ -41,11 +41,15 @@ export default function Dashboard() {
         const shopSnapshot = await getDoc(doc(db, "shops", currentUser.uid));
 
         if (shopSnapshot.exists()) {
-          setShop(shopSnapshot.data());
+          setShop({
+            id: shopSnapshot.id,
+            ...shopSnapshot.data(),
+          });
         } else {
           setError("Your shop profile could not be found.");
         }
-      } catch {
+      } catch (loadError) {
+        console.error(loadError);
         setError("Could not load your shop profile.");
       } finally {
         setLoadingShop(false);
@@ -69,7 +73,10 @@ export default function Dashboard() {
 
         setProducts(productList);
       },
-      () => setError("Could not load your products.")
+      (productsError) => {
+        console.error(productsError);
+        setError("Could not load your products.");
+      }
     );
 
     return unsubscribe;
@@ -77,7 +84,11 @@ export default function Dashboard() {
 
   function handleChange(event) {
     const { name, value } = event.target;
-    setForm((current) => ({ ...current, [name]: value }));
+
+    setForm((current) => ({
+      ...current,
+      [name]: value,
+    }));
   }
 
   async function handleAddProduct(event) {
@@ -108,7 +119,8 @@ export default function Dashboard() {
       });
 
       setMessage("Product added to your shop.");
-    } catch {
+    } catch (addProductError) {
+      console.error(addProductError);
       setError("Could not add this product. Please try again.");
     } finally {
       setSavingProduct(false);
@@ -116,7 +128,9 @@ export default function Dashboard() {
   }
 
   async function handleDeleteProduct(productId) {
-    const shouldDelete = window.confirm("Remove this product from your shop?");
+    const shouldDelete = window.confirm(
+      "Remove this product from your shop?"
+    );
 
     if (!shouldDelete) {
       return;
@@ -125,23 +139,27 @@ export default function Dashboard() {
     try {
       await deleteDoc(doc(db, "products", productId));
       setMessage("Product removed.");
-    } catch {
+    } catch (deleteError) {
+      console.error(deleteError);
       setError("Could not remove this product.");
     }
   }
 
+  const storefrontUrl = currentUser
+    ? `${window.location.origin}/store/${currentUser.uid}`
+    : "";
+
   async function copyStorefrontLink() {
-    if (!shop?.slug) {
+    if (!storefrontUrl) {
       return;
     }
 
-    const storefrontUrl = `${window.location.origin}/store/${shop.slug}`;
-
     try {
       await navigator.clipboard.writeText(storefrontUrl);
-      setMessage("Storefront link copied.");
-    } catch {
-      setError("Could not copy the link. You can open it instead.");
+      setMessage("Storefront link copied. Share it on WhatsApp.");
+    } catch (copyError) {
+      console.error(copyError);
+      setError("Could not copy the link. Use View storefront instead.");
     }
   }
 
@@ -152,10 +170,6 @@ export default function Dashboard() {
       </main>
     );
   }
-
-  const storefrontUrl = shop?.slug
-    ? `${window.location.origin}/store/${shop.slug}`
-    : "";
 
   return (
     <main className="dashboard-page">
@@ -168,7 +182,7 @@ export default function Dashboard() {
           </p>
         </div>
 
-        {shop?.slug && (
+        {currentUser && (
           <div className="storefront-actions">
             <a
               className="secondary-button"
@@ -178,15 +192,25 @@ export default function Dashboard() {
             >
               View storefront
             </a>
-            <button className="outline-button" onClick={copyStorefrontLink}>
+
+            <button
+              className="outline-button"
+              type="button"
+              onClick={copyStorefrontLink}
+            >
               Copy link
             </button>
           </div>
         )}
       </section>
 
-      {error && <p className="dashboard-message error-message">{error}</p>}
-      {message && <p className="dashboard-message success-message">{message}</p>}
+      {error && (
+        <p className="dashboard-message error-message">{error}</p>
+      )}
+
+      {message && (
+        <p className="dashboard-message success-message">{message}</p>
+      )}
 
       <section className="dashboard-grid">
         <div className="dashboard-panel">
@@ -195,6 +219,7 @@ export default function Dashboard() {
               <p className="panel-label">Catalog</p>
               <h2>Add a product</h2>
             </div>
+
             <span className="product-count">{products.length} listed</span>
           </div>
 
@@ -234,7 +259,11 @@ export default function Dashboard() {
               />
             </label>
 
-            <button className="primary-button" type="submit" disabled={savingProduct}>
+            <button
+              className="primary-button"
+              type="submit"
+              disabled={savingProduct}
+            >
               {savingProduct ? "Adding product..." : "Add product"}
             </button>
           </form>
@@ -261,12 +290,15 @@ export default function Dashboard() {
                     <h3>{product.name}</h3>
                     <p>{product.description || "No description added."}</p>
                   </div>
+
                   <div className="product-row-side">
                     <strong>
                       KES {Number(product.price || 0).toLocaleString()}
                     </strong>
+
                     <button
                       className="delete-button"
+                      type="button"
                       onClick={() => handleDeleteProduct(product.id)}
                     >
                       Remove
@@ -281,16 +313,20 @@ export default function Dashboard() {
 
       <section className="dashboard-tip">
         <span className="tip-number">01</span>
+
         <div>
           <h2>Your shop link is your storefront.</h2>
           <p>
-            Add products, copy the link, and share it in your WhatsApp status or
-            customer conversations.
+            Add products, copy the link, and share it in your WhatsApp status
+            or customer conversations.
           </p>
         </div>
-        <Link to={shop?.slug ? `/store/${shop.slug}` : "/dashboard"}>
-          Open public page
-        </Link>
+
+        {currentUser && (
+          <Link to={`/store/${currentUser.uid}`}>
+            Open public page
+          </Link>
+        )}
       </section>
     </main>
   );
