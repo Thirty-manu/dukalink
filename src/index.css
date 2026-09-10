@@ -1420,3 +1420,483 @@ select {
     text-align: center;
   }
 }
+
+/* DukaLink dashboard polish */
+:root {
+  --ink: #f7f4e9;
+  --muted: #b7c9bb;
+  --green-950: #082f24;
+  --green-900: #0d3d2d;
+  --green-800: #14513b;
+  --green-700: #1c6848;
+  --lime: #c8ff4d;
+  --orange: #e7853b;
+  --line: rgba(205, 255, 180, 0.22);
+  --shadow: 0 22px 70px rgba(0, 0, 0, 0.24);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at 8% 8%, rgba(200, 255, 77, 0.08), transparent 30rem),
+    linear-gradient(135deg, var(--green-950), #103f30 55%, #1c593e);
+  color: var(--ink);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dashboard-page {
+  width: min(1180px, calc(100% - 48px));
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 72px 0 96px;
+}
+
+.dashboard-hero {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 40px;
+  margin-bottom: 42px;
+}
+
+.dashboard-hero h1 {
+  max-width: 760px;
+  margin: 10px 0 18px;
+  color: var(--ink);
+  font-size: clamp(3.5rem, 9vw, 7.8rem);
+  font-weight: 800;
+  letter-spacing: -0.075em;
+  line-height: 0.86;
+  overflow-wrap: anywhere;
+}
+
+.dashboard-subtitle {
+  max-width: 510px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 1.08rem;
+  line-height: 1.65;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--orange);
+  font-size: 0.73rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.dashboard-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 3px;
+}
+
+.primary-button,
+.secondary-button,
+.text-button {
+  border: 0;
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    transform 160ms ease,
+    background 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease;
+}
+
+.primary-button,
+.secondary-button {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  padding: 0 20px;
+  font-size: 0.92rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.primary-button {
+  background: var(--lime);
+  color: #17351e;
+}
+
+.primary-button:hover,
+.secondary-button:hover {
+  transform: translateY(-2px);
+}
+
+.primary-button:hover {
+  background: #dcff83;
+}
+
+.secondary-button {
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+}
+
+.secondary-button:hover {
+  border-color: var(--lime);
+  color: var(--lime);
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(300px, 0.82fr) minmax(0, 1.18fr);
+  align-items: start;
+  gap: 24px;
+}
+
+.dashboard-card {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: rgba(8, 47, 36, 0.58);
+  box-shadow: var(--shadow);
+  padding: 28px;
+  backdrop-filter: blur(14px);
+}
+
+.card-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.card-heading h2 {
+  margin: 8px 0 0;
+  color: var(--ink);
+  font-size: clamp(1.55rem, 3vw, 2.15rem);
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.card-heading > span {
+  color: var(--muted);
+  font-size: 0.86rem;
+  white-space: nowrap;
+}
+
+.product-form {
+  display: grid;
+  gap: 19px;
+}
+
+.product-form label {
+  display: grid;
+  gap: 8px;
+  color: var(--ink);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.product-form input,
+.product-form textarea {
+  width: 100%;
+  border: 1px solid rgba(219, 255, 218, 0.25);
+  border-radius: 10px;
+  outline: none;
+  background: rgba(255, 255, 255, 0.055);
+  color: var(--ink);
+  padding: 14px 15px;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.product-form input {
+  min-height: 50px;
+}
+
+.product-form textarea {
+  min-height: 116px;
+  resize: vertical;
+}
+
+.product-form input::placeholder,
+.product-form textarea::placeholder {
+  color: rgba(232, 247, 232, 0.52);
+}
+
+.product-form input:focus,
+.product-form textarea:focus {
+  border-color: var(--lime);
+  background: rgba(255, 255, 255, 0.09);
+  box-shadow: 0 0 0 3px rgba(200, 255, 77, 0.12);
+}
+
+.product-form small {
+  margin-top: -2px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 400;
+  line-height: 1.45;
+}
+
+.optional-label {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.form-button {
+  width: 100%;
+  margin-top: 5px;
+}
+
+.primary-button:disabled {
+  cursor: wait;
+  opacity: 0.58;
+  transform: none;
+}
+
+.upload-preview {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.upload-preview img {
+  display: block;
+  width: 100%;
+  max-height: 230px;
+  object-fit: cover;
+}
+
+.upload-preview button {
+  width: 100%;
+  border: 0;
+  border-top: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 11px;
+  font-size: 0.82rem;
+}
+
+.upload-preview button:hover {
+  color: var(--lime);
+}
+
+.form-error,
+.form-success {
+  margin: 0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+
+.form-error {
+  background: rgba(211, 75, 72, 0.16);
+  color: #ffb4a8;
+}
+
+.form-success {
+  background: rgba(200, 255, 77, 0.1);
+  color: var(--lime);
+}
+
+.empty-state {
+  display: grid;
+  min-height: 210px;
+  place-content: center;
+  border: 1px dashed rgba(219, 255, 218, 0.24);
+  border-radius: 16px;
+  padding: 28px;
+  text-align: center;
+}
+
+.empty-state p {
+  margin: 0 0 8px;
+  color: var(--ink);
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.empty-state span {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.product-list {
+  display: grid;
+  gap: 12px;
+}
+
+.dashboard-product {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 15px;
+  border: 1px solid rgba(219, 255, 218, 0.17);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.045);
+  padding: 12px;
+}
+
+.dashboard-product-image,
+.dashboard-product-placeholder {
+  width: 64px;
+  height: 64px;
+  border-radius: 11px;
+}
+
+.dashboard-product-image {
+  display: block;
+  object-fit: cover;
+}
+
+.dashboard-product-placeholder {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--orange), var(--lime));
+  color: #17351e;
+  font-size: 1.45rem;
+  font-weight: 900;
+}
+
+.dashboard-product-content {
+  min-width: 0;
+}
+
+.dashboard-product-content h3 {
+  overflow: hidden;
+  margin: 0 0 5px;
+  color: var(--ink);
+  font-size: 1rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-product-content p {
+  overflow: hidden;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-product-side {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+}
+
+.dashboard-product-side strong {
+  color: var(--lime);
+  font-size: 0.92rem;
+  white-space: nowrap;
+}
+
+.text-button {
+  background: transparent;
+  color: #ffb4a8;
+  font-size: 0.76rem;
+}
+
+.text-button:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+@media (max-width: 900px) {
+  .dashboard-page {
+    width: min(100% - 32px, 680px);
+    padding-top: 44px;
+  }
+
+  .dashboard-hero {
+    display: grid;
+    gap: 24px;
+  }
+
+  .dashboard-actions {
+    justify-content: start;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .dashboard-page {
+    width: min(100% - 24px, 420px);
+    padding-top: 32px;
+    padding-bottom: 56px;
+  }
+
+  .dashboard-hero h1 {
+    font-size: clamp(3.1rem, 18vw, 5.3rem);
+  }
+
+  .dashboard-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .primary-button,
+  .secondary-button {
+    width: 100%;
+    padding: 0 12px;
+  }
+
+  .dashboard-card {
+    border-radius: 18px;
+    padding: 20px;
+  }
+
+  .dashboard-product {
+    grid-template-columns: 52px minmax(0, 1fr);
+  }
+
+  .dashboard-product-image,
+  .dashboard-product-placeholder {
+    width: 52px;
+    height: 52px;
+  }
+
+  .dashboard-product-side {
+    grid-column: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
