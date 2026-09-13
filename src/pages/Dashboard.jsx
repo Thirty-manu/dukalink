@@ -1,3 +1,4 @@
+import { useAuth } from "../context/AuthContext";
 import { useEffect, useState } from "react";
 import {
   addDoc,
@@ -20,7 +21,8 @@ function formatKes(value) {
   }).format(Number(value || 0));
 }
 
-export default function Dashboard({ currentUser }) {
+export default function Dashboard() {
+  const { currentUser } = useAuth();
   const [products, setProducts] = useState([]);
   const [form, setForm] = useState({
     name: "",
