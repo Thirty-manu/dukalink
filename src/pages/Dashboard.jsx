@@ -39,7 +39,7 @@ export default function Dashboard() {
     currentUser?.email?.split("@")[0] ||
     "My shop";
 
-  const storefrontPath = `/${currentUser?.uid || ""}`;
+  const storefrontPath = `/store/${currentUser?.uid || ""}`;
 
   useEffect(() => {
     if (!currentUser?.uid) return undefined;
