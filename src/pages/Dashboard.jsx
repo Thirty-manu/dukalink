@@ -41,6 +41,7 @@ export default function Dashboard() {
     phone: "",
     location: "",
     description: "",
+    slug: "",
   });
   const [profileLoading, setProfileLoading] = useState(true);
   const [savingProfile, setSavingProfile] = useState(false);
@@ -52,7 +53,8 @@ export default function Dashboard() {
     currentUser?.email?.split("@")[0] ||
     "My shop";
 
-  const storefrontPath = `/store/${currentUser?.uid || ""}`;
+  const storefrontSlug = profileForm.slug.trim() || currentUser?.uid || "";
+  const storefrontPath = `/store/${storefrontSlug}`;
 
   useEffect(() => {
     if (!currentUser?.uid) return undefined;
@@ -70,6 +72,7 @@ export default function Dashboard() {
             phone: shopData.phone || "",
             location: shopData.location || "",
             description: shopData.description || "",
+            slug: shopData.slug || "",
           });
         }
       } catch (loadProfileError) {
@@ -123,9 +126,18 @@ export default function Dashboard() {
   function updateProfileForm(event) {
     const { name, value } = event.target;
 
+    const cleanedValue =
+      name === "slug"
+        ? value
+            .toLowerCase()
+            .trim()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-+|-+$/g, "")
+        : value;
+
     setProfileForm((currentForm) => ({
       ...currentForm,
-      [name]: value,
+      [name]: cleanedValue,
     }));
   }
 
@@ -142,6 +154,28 @@ export default function Dashboard() {
     try {
       setSavingProfile(true);
 
+      const desiredSlug = profileForm.slug.trim();
+
+      if (desiredSlug) {
+        const slugQuery = query(
+          collection(db, "shops"),
+          where("slug", "==", desiredSlug)
+        );
+
+        const slugSnapshot = await getDocs(slugQuery);
+
+        const slugBelongsToAnotherShop = slugSnapshot.docs.some(
+          (shopDocument) => shopDocument.id !== currentUser.uid
+        );
+
+        if (slugBelongsToAnotherShop) {
+          setProfileError(
+            "That store link name is already taken. Try another one."
+          );
+          return;
+        }
+      }
+
       await setDoc(
         doc(db, "shops", currentUser.uid),
         {
@@ -149,6 +183,7 @@ export default function Dashboard() {
           phone: profileForm.phone.trim(),
           location: profileForm.location.trim(),
           description: profileForm.description.trim(),
+          slug: desiredSlug,
         },
         { merge: true }
       );
@@ -299,6 +334,20 @@ export default function Dashboard() {
                 onChange={updateProfileForm}
                 placeholder="e.g. Nairobi, Kenya"
               />
+            </label>
+
+            <label>
+              Store link name <span className="optional-label">(optional)</span>
+              <input
+                name="slug"
+                value={profileForm.slug}
+                onChange={updateProfileForm}
+                placeholder="e.g. manuk-thirty"
+                maxLength="40"
+              />
+              <small>
+                Your link: {window.location.origin}/store/{profileForm.slug || currentUser.uid}
+              </small>
             </label>
 
             <label>
