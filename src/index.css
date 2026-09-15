@@ -1900,3 +1900,17 @@ a {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Shop profile editor */
+.profile-card {
+  margin-bottom: 24px;
+}
+
+.profile-form {
+  max-width: 640px;
+}
+
+.profile-loading {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
