@@ -1914,3 +1914,25 @@ a {
   color: var(--muted);
   font-size: 0.9rem;
 }
+
+/* Product editing controls */
+.product-actions {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  gap: 12px;
+}
+
+.edit-button {
+  color: var(--lime);
+}
+
+.edit-button:hover {
+  color: #ffffff;
+}
+
+@media (max-width: 520px) {
+  .product-actions {
+    gap: 16px;
+  }
+}

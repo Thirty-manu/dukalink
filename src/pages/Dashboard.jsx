@@ -11,6 +11,7 @@ import {
   query,
   serverTimestamp,
   setDoc,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { db } from "../firebase";
@@ -33,6 +34,7 @@ export default function Dashboard() {
     imageUrl: "",
   });
   const [savingProduct, setSavingProduct] = useState(false);
+  const [editingProductId, setEditingProductId] = useState(null);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
@@ -197,6 +199,35 @@ export default function Dashboard() {
     }
   }
 
+  function resetProductForm() {
+    setForm({
+      name: "",
+      price: "",
+      description: "",
+      imageUrl: "",
+    });
+    setEditingProductId(null);
+  }
+
+  function handleEditProduct(product) {
+    setError("");
+    setMessage("");
+
+    setForm({
+      name: product.name || "",
+      price: String(product.price || ""),
+      description: product.description || "",
+      imageUrl: product.imageUrl || "",
+    });
+
+    setEditingProductId(product.id);
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }
+
   async function handleAddProduct(event) {
     event.preventDefault();
     setError("");
@@ -214,29 +245,36 @@ export default function Dashboard() {
       return;
     }
 
+    const productData = {
+      name: form.name.trim(),
+      price,
+      description: form.description.trim(),
+      imageUrl: form.imageUrl.trim(),
+    };
+
     try {
       setSavingProduct(true);
 
-      await addDoc(collection(db, "products"), {
-        shopId: currentUser.uid,
-        name: form.name.trim(),
-        price,
-        description: form.description.trim(),
-        imageUrl: form.imageUrl.trim(),
-        createdAt: serverTimestamp(),
-      });
+      if (editingProductId) {
+        await updateDoc(doc(db, "products", editingProductId), productData);
+        setMessage("Product updated successfully.");
+      } else {
+        await addDoc(collection(db, "products"), {
+          ...productData,
+          shopId: currentUser.uid,
+          createdAt: serverTimestamp(),
+        });
+        setMessage("Product added to your shop.");
+      }
 
-      setForm({
-        name: "",
-        price: "",
-        description: "",
-        imageUrl: "",
-      });
-
-      setMessage("Product added to your shop.");
-    } catch (addProductError) {
-      console.error(addProductError);
-      setError("Could not add this product. Please try again.");
+      resetProductForm();
+    } catch (saveProductError) {
+      console.error(saveProductError);
+      setError(
+        editingProductId
+          ? "Could not update this product. Please try again."
+          : "Could not add this product. Please try again."
+      );
     } finally {
       setSavingProduct(false);
     }
@@ -451,8 +489,25 @@ export default function Dashboard() {
             {message && <p className="form-success">{message}</p>}
 
             <button className="primary-button form-button" type="submit" disabled={savingProduct}>
-              {savingProduct ? "Adding product..." : "Add product"}
+              {savingProduct
+                ? editingProductId
+                  ? "Saving changes..."
+                  : "Adding product..."
+                : editingProductId
+                  ? "Save changes"
+                  : "Add product"}
             </button>
+
+            {editingProductId && (
+              <button
+                className="secondary-button form-button"
+                type="button"
+                onClick={resetProductForm}
+                disabled={savingProduct}
+              >
+                Cancel edit
+              </button>
+            )}
           </form>
         </div>
 
@@ -492,13 +547,22 @@ export default function Dashboard() {
 
                   <div className="dashboard-product-side">
                     <strong>{formatKes(product.price)}</strong>
-                    <button
-                      className="text-button"
-                      type="button"
-                      onClick={() => handleDeleteProduct(product.id)}
-                    >
-                      Remove
-                    </button>
+                    <div className="product-actions">
+                      <button
+                        className="text-button edit-button"
+                        type="button"
+                        onClick={() => handleEditProduct(product)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="text-button"
+                        type="button"
+                        onClick={() => handleDeleteProduct(product.id)}
+                      >
+                        Remove
+                      </button>
+                    </div>
                   </div>
                 </article>
               ))}
