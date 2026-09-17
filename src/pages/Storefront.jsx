@@ -168,6 +168,19 @@ export default function Storefront() {
             <section className="storefront-grid">
               {filteredProducts.map((product) => (
             <article className="storefront-card" key={product.id}>
+              {product.imageUrl ? (
+                <img
+                  className="storefront-product-image"
+                  src={product.imageUrl}
+                  alt={product.name}
+                  loading="lazy"
+                />
+              ) : (
+                <div className="storefront-product-placeholder" aria-hidden="true">
+                  {product.name?.charAt(0)?.toUpperCase() || "P"}
+                </div>
+              )}
+
               <div className="storefront-card-body">
                 <h3>{product.name}</h3>
                 <p>{product.description || "No description added."}</p>
