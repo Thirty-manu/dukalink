@@ -33,6 +33,7 @@ export default function Dashboard() {
     price: "",
     description: "",
     imageUrl: "",
+    category: "Other",
   });
   const [savingProduct, setSavingProduct] = useState(false);
   const [editingProductId, setEditingProductId] = useState(null);
@@ -206,6 +207,7 @@ export default function Dashboard() {
       price: "",
       description: "",
       imageUrl: "",
+      category: "Other",
     });
     setEditingProductId(null);
   }
@@ -219,6 +221,7 @@ export default function Dashboard() {
       price: String(product.price || ""),
       description: product.description || "",
       imageUrl: product.imageUrl || "",
+      category: product.category || "Other",
     });
 
     setEditingProductId(product.id);
@@ -251,6 +254,7 @@ export default function Dashboard() {
       price,
       description: form.description.trim(),
       imageUrl: form.imageUrl.trim(),
+      category: form.category || "Other",
     };
 
     try {
@@ -456,6 +460,26 @@ export default function Dashboard() {
                 rows="4"
               />
             </label>
+
+            <label>
+              Product image URL <span className="optional-label">(optional)</span>
+            </label>
+
+            <label>
+              Category
+                <select
+                  name="category"
+                  value={form.category}
+                  onChange={updateForm}
+                >
+                  <option value="Shoes">Shoes</option>
+                  <option value="Clothes">Clothes</option>
+                  <option value="Accessories">Accessories</option>
+                  <option value="Electronics">Electronics</option>
+                  <option value="Food">Food</option>
+                  <option value="Other">Other</option>
+                </select>
+              </label>
 
             <label>
               Product image URL <span className="optional-label">(optional)</span>

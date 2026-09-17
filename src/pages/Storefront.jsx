@@ -18,6 +18,7 @@ export default function Storefront() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
   useEffect(() => {
     async function loadStorefront() {
@@ -87,6 +88,20 @@ export default function Storefront() {
     loadStorefront();
   }, [slug]);
 
+  const categories = [
+    "All",
+    ...Array.from(
+      new Set(products.map((product) => product.category || "Other"))
+    ).sort(),
+  ];
+
+  const filteredProducts =
+    selectedCategory === "All"
+      ? products
+      : products.filter(
+          (product) => (product.category || "Other") === selectedCategory
+        );
+
   if (loading) {
     return (
       <main className="storefront-page">
@@ -127,8 +142,31 @@ export default function Storefront() {
           <p>This shop has not added any products yet.</p>
         </div>
       ) : (
-        <section className="storefront-grid">
-          {products.map((product) => (
+        <>
+          <div className="category-filters" aria-label="Product categories">
+            {categories.map((category) => (
+              <button
+                className={
+                  selectedCategory === category
+                    ? "category-filter active"
+                    : "category-filter"
+                }
+                key={category}
+                type="button"
+                onClick={() => setSelectedCategory(category)}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+
+          {filteredProducts.length === 0 ? (
+            <div className="storefront-empty">
+              <p>No products in this category yet.</p>
+            </div>
+          ) : (
+            <section className="storefront-grid">
+              {filteredProducts.map((product) => (
             <article className="storefront-card" key={product.id}>
               <div className="storefront-card-body">
                 <h3>{product.name}</h3>
@@ -154,8 +192,10 @@ export default function Storefront() {
                 </a>
               </div>
             </article>
-          ))}
-        </section>
+              ))}
+            </section>
+          )}
+        </>
       )}
     </main>
   );
