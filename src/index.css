@@ -2028,3 +2028,14 @@ a {
     height: 210px;
   }
 }
+
+/* Store announcement banner */
+.storefront-announcement {
+  background: linear-gradient(90deg, var(--lime), var(--orange));
+  color: #17351e;
+  font-weight: 700;
+  text-align: center;
+  padding: 10px 16px;
+  border-radius: 12px;
+  margin: 16px 0 24px;
+}

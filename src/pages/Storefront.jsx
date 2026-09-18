@@ -128,6 +128,12 @@ export default function Storefront() {
         <p className="eyebrow storefront-eyebrow">DukaLink storefront</p>
         <h1>{shop.businessName}</h1>
 
+        {shop.announcement && (
+          <div className="storefront-announcement">
+            📢 {shop.announcement}
+          </div>
+        )}
+
         {shop.description && (
           <p className="storefront-description">{shop.description}</p>
         )}

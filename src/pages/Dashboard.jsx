@@ -42,6 +42,7 @@ export default function Dashboard() {
 
   const [profileForm, setProfileForm] = useState({
     businessName: "",
+    announcement: "",
     phone: "",
     location: "",
     description: "",
@@ -73,6 +74,7 @@ export default function Dashboard() {
 
           setProfileForm({
             businessName: shopData.businessName || "",
+        announcement: shopData.announcement || "",
             phone: shopData.phone || "",
             location: shopData.location || "",
             description: shopData.description || "",
@@ -187,6 +189,7 @@ export default function Dashboard() {
           phone: profileForm.phone.trim(),
           location: profileForm.location.trim(),
           description: profileForm.description.trim(),
+          announcement: profileForm.announcement.trim(),
           slug: desiredSlug,
         },
         { merge: true }
@@ -406,6 +409,19 @@ export default function Dashboard() {
 
             {profileError && <p className="form-error">{profileError}</p>}
             {profileMessage && <p className="form-success">{profileMessage}</p>}
+
+            <label>
+              Store announcement
+              <span className="hint"> (optional — shows at the top of your shop)</span>
+              <input
+                type="text"
+                name="announcement"
+                placeholder="e.g. Weekend sale: 10% off shoes!"
+                value={profileForm.announcement}
+                onChange={updateProfileForm}
+                maxLength={120}
+              />
+            </label>
 
             <button className="primary-button form-button" type="submit" disabled={savingProfile}>
               {savingProfile ? "Saving profile..." : "Save profile"}
